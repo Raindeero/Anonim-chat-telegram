@@ -1,0 +1,15 @@
+CREATE TABLE users(
+-- Main user data
+id INTEGER PRIMARY KEY,
+sex INTEGER NOT NULL,
+name TEXT NOT NULL,
+age INTEGER NOT NULL,
+
+-- User`s preferences
+sex_partner INTEGER NOT NULL,
+age_partner_from INTEGER NOT NULL,
+age_partner_to INTEGER NOT NULL,
+
+-- Partner id
+partner INTEGER DEFAULT 0
+)
