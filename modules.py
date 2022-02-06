@@ -7,7 +7,7 @@ from DB import SQLite_db
 from middleware import Middleware
 
 loop = asyncio.get_event_loop()
-bot = Bot(token="5233063802:AAHOLlnI2PTivoyTPxksZulyHqfjvxC-biE", loop=loop)
+bot = Bot(token="", loop=loop)
 storage = MemoryStorage()
 dp = Dispatcher(bot, loop=loop, storage=storage)
 db = SQLite_db('database.db')
