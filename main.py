@@ -1,10 +1,15 @@
+import random
+
 from aiogram import executor, types
+from aiogram.dispatcher.filters import Text
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 
 from DB import SQLite_db
+from db_requests import GET_SEARCH_RESULT_REQ, GET_ALTER_SEARCH_RESULT_REQ, REG_NEW_USER_REQ, ADD_PARTNER_REQ
+from models import UserData
 from modules import dp
 from states import StateOn
-from temp import TempCash, UserData, SEX_DICT
+from temp import TempCash, UserTempData, SEX_DICT
 
 
 @dp.message_handler(commands=['start'])
@@ -28,7 +33,7 @@ async def reg_sex(callback_query: types.CallbackQuery):
     await callback_query.message.delete()
     uid = callback_query.from_user.id
     sex = SEX_DICT.get(callback_query.data.replace("user_", ""))
-    TempCash.insert(uid, UserData(uid, sex))
+    TempCash.insert(uid, UserTempData(uid, sex))
 
     await StateOn.reg_age.set()
     await callback_query.message.answer("Сколько тебе лет?")
@@ -87,17 +92,27 @@ async def last_step(callback_query: types.CallbackQuery, db: SQLite_db):
     fu = TempCash.get_and_add_age_partner(
         callback_query.from_user.id, ages.get(callback_query.data.replace("age_", ""))
     )
-    db.query(
-        'INSERT INTO users(id, sex, name, age, sex_partner, age_partner_from, age_partner_to) VALUES (?,?,?,?,?,?,?)',
-        [fu.uid, fu.sex.value, fu.name, fu.age, fu.sex_partner.value, *fu.age_partner]
-    )
+    db.query(REG_NEW_USER_REQ, [fu.uid, fu.sex.value, fu.name, fu.age, fu.sex_partner.value, *fu.age_partner])
     kb = ReplyKeyboardMarkup().add('Найти собеседника')
     await callback_query.message.answer('Регистрация прошла успешнo', reply_markup=kb)
 
 
-@dp.message_handler(lambda c: c.data.startswith('Найти собеседника'))
-async def finder():
-    pass
+@dp.message_handler(Text('Найти собеседника'))
+async def finder(message: types.Message, db: SQLite_db, user_info: UserData):
+    results = db.checkall(
+        GET_SEARCH_RESULT_REQ,
+        [user_info.sex_partner, user_info.age_partner_from, user_info.age_partner_to, user_info.id]
+    )
+    if not results:
+        results = db.checkall(GET_ALTER_SEARCH_RESULT_REQ, [user_info.id])
+    if not results:
+        return
+
+    results = [db.to_model(i, UserData) for i in results]
+    love = random.choice(results)
+    db.query(ADD_PARTNER_REQ, [love.id, user_info.id])
+    await message.answer('Собеседник найден')
+    print(db.check('SELECT meeting_id FROM users WHERE id = ?', [user_info.id]))
 
 
 if __name__ == '__main__':

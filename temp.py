@@ -7,7 +7,7 @@ class Sexes(Enum):
     ALL = 3
 
 
-class UserData:
+class UserTempData:
     def __init__(self, uid: int, sex: Sexes):
         self.uid = uid
         self.sex = sex
@@ -22,7 +22,7 @@ class TempCash:
     cash = {}
 
     @classmethod
-    def insert(cls, uid: int, data: UserData):
+    def insert(cls, uid: int, data: UserTempData):
         cls.cash[uid] = data
 
     @classmethod
@@ -34,7 +34,7 @@ class TempCash:
         cls.cash.get(uid).name = name
 
     @classmethod
-    def get_and_add_age_partner(cls, uid: int, age: tuple) -> UserData:
+    def get_and_add_age_partner(cls, uid: int, age: tuple) -> UserTempData:
         cls.cash.get(uid).age_partner = age
         return cls.get(uid)
 
