@@ -36,7 +36,9 @@ class TempCash:
     @classmethod
     def get_and_add_age_partner(cls, uid: int, age: tuple) -> UserTempData:
         cls.cash.get(uid).age_partner = age
-        return cls.get(uid)
+        y = cls.get(uid)
+        cls.delete(uid)
+        return y
 
     @classmethod
     def add_sex_partner(cls, uid: int, sex: Sexes):
@@ -52,13 +54,3 @@ class TempCash:
 
 
 SEX_DICT = {'male': Sexes.MALE, 'female': Sexes.FEMALE, 'all': Sexes.ALL}
-#
-# TempCash.insert(uid, UserData(uid, sex))
-#
-# TempCash.add_age(uid, age)
-#
-# TempCash.add_name(uid, name)
-#
-# fu = TempCash.get(uid)
-# 'INSERT INTO user (id, sex, name, age) VALUES (?, ?, ?, ?)', [fu.uid, fu.sex, fu.name, fu.age]
-# await mes.answer('Вы успешно зарегались!')

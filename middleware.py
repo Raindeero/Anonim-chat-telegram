@@ -17,7 +17,7 @@ class Middleware(BaseMiddleware):
         data['db'] = self.db
 
         u = self.db.check(self.req, [message.from_user.id])
-        d_u = self.db.to_model(u, UserData)
+        d_u = self.db.to_model(u, UserData) if u else None
         data['user_info'] = d_u
 
         pu = self.db.check(self.req, [d_u.meeting_id]) if d_u and d_u.meeting_id else None
@@ -27,7 +27,7 @@ class Middleware(BaseMiddleware):
         data['db'] = self.db
 
         u = self.db.check(self.req, [callback_query.from_user.id])
-        d_u = self.db.to_model(u, UserData)
+        d_u = self.db.to_model(u, UserData) if u else None
         data['user_info'] = d_u
 
         pu = self.db.check(self.req, [d_u.meeting_id]) if d_u and d_u.meeting_id else None
