@@ -7,7 +7,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 from DB import SQLite_db
 from db_requests import GET_SEARCH_RESULT_REQ, GET_ALTER_SEARCH_RESULT_REQ, REG_NEW_USER_REQ, ADD_PARTNER_REQ
 from models import UserData
-from modules import dp
+from config import dp
 from states import StateOn
 from temp import TempCash, UserTempData, SEX_DICT
 

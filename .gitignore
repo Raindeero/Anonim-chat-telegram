@@ -2,4 +2,4 @@ venv
 .idea
 
 database.db
-modules.py
+config.py
